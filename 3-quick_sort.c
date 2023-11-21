@@ -1,74 +1,105 @@
 #include "sort.h"
 
-/**
- * swap - swaps two variables
- * @a: the first variable
- * @b: the second variable
- *
- * Return: void
- */
-void swap(int *a, int *b)
-{
-	int tmp = *a;
-	*a = *b;
-	*b = tmp;
-}
+void swap_int(int *a, int *b);
+void divide(int st, int pi, int *i, size_t size);
+int partition(int beg, int pivot, int *i, size_t size);
 
 /**
- * quick_sort - the wrapper function to kickstart the sorting
- * @array: array 2 B sorted
- * @size: how tall is the array
+ * quick_sort - sorts an array of ints
+ * @array: array to be sorted
+ * @size: size of the array
  *
  * Return: void
  */
 void quick_sort(int *array, size_t size)
 {
-	quick_sort_recursive(array, 0, size - 1, size);
-}
+	int st = 0, pi;
 
-/**
- * quick_sort_recursive - a function that sorts an array
- * 	with the quick sort algorithm
- * @array: the array 2 be sorted
- * @start: the start of the array
- * @end: the end of the array
- *
- * Return: void
- */
-void quick_sort_recursive(int *array, int start, int end, size_t size)
-{
-	if (start < end)
+	if (array && size > 1)
 	{
-		int pivot = partition(array, start, end, size);
-		quick_sort_recursive(array, start, pivot - 1, size);
-		quick_sort_recursive(array, pivot + 1, end, size);
+		pi = (size - 1);
+		divide(st, pi, array, size);
 	}
 }
 
 /**
- * partition - the function that divides the array into two sub arrays
- * @array: the array to be partitied
- * @start: the start of the array
- * @end: the end of the array
- *
- * Return: index of the pivot element
- */
-int partition(int *array, int start, int end, size_t size) 
+* divide - recursively partition
+* @st: beginning of divided array
+* @pi: end of divided array
+* @i: the beginning of the array
+* @size: size of array
+*
+* Return: void
+**/
+void divide(int st, int pi, int *i, size_t size)
 {
-	int pivot = array[end];
-	int i = (start - 1);
-	int j;
+	int f, s, np;
 
-	for (j = start; j <= end - 1; j++)
+	if (st < pi)
 	{
-		if (array[j] < pivot)
+		s = partition(st, pi, i, size);
+		f = st;
+		np = s - 1;
+
+		if (f != np && s != pi)
+			np--;
+		divide(f, np, i, size);
+		divide(s, pi, i, size);
+	}
+}
+
+/**
+* partition - divides an array
+* @beg: beginning of array separated
+* @pivot: end of array separated
+* @i: beg of array
+* @size: size of array
+*
+* Return: new start
+**/
+int partition(int beg, int pivot, int *i, size_t size)
+{
+	int tmp = beg;
+
+	while (tmp != pivot)
+	{
+		if (i[tmp] < i[pivot])
 		{
-			i++;
-			swap(&array[i], &array[j]);
-			print_array(array, size);
+			if (tmp != beg)
+			{
+				swap_int(i + tmp, i + beg);
+				print_array(i, size);
+			}
+			tmp++;
+			beg++;
 		}
+		else
+			tmp++;
 	}
-	swap(&array[i + 1], &array[end]);
-	print_array(array, size);
-	return (i + 1);
+	if (beg != pivot)
+	{
+		if (i[beg] > i[pivot])
+		{
+			swap_int(i + pivot, i + beg);
+			print_array(i, size);
+		}
+		beg++;
+	}
+	return (beg);
+}
+
+/**
+  * swap_int - swaps the values of two integers
+  * @a: the first int
+  * @b: the second int
+  *
+  * Return: void
+  */
+void swap_int(int *a, int *b)
+{
+	int tmp;
+
+	tmp = *a;
+	*a = *b;
+	*b = tmp;
 }
